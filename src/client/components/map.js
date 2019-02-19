@@ -8,13 +8,14 @@
 
 import * as React from "react";
 
-export default class HelloWorld extends React.Component {
+export default class Map extends React.Component {
     render() {
         return (
             <div>
-                <h1>{"Hello, world!"}</h1>
-                <hr />
-                <small>{"becode/bookshelf"}</small>
+                <img
+                    className="image-test"
+                    src="https://images.frandroid.com/wp-content/uploads/2016/01/google-maps.png"
+                />
             </div>
         );
     }
