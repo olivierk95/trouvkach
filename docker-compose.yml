@@ -1,3 +1,4 @@
+---
   version: "3"
   services:
     node:
@@ -5,6 +6,8 @@
       environment:
         NODE_ENV: "development"
         APP_PORT: 12345
+        MONGO_ATLAS_LOGIN: "bestdev"
+        MONGO_ATLAS_PASSWORD: "bestdev"
       volumes:
         - "./package.json:/src/app/package.json"
         - "./node_modules:/src/app/node_modules"
@@ -15,7 +18,7 @@
       ports:
         - "80:12345"
         - "9229"
-      command: "nodemon --inspect=0.0.0.0:9229 -L --watch bin/server bin/server/index.js"
+      command: "nodemon --inspect=0.0.0.0:9229 --watch bin/server bin/server/index.js"
     mongo:
       image: "mongo"
       restart: "always"
@@ -26,15 +29,5 @@
       environment:
         MONGO_INITDB_ROOT_USERNAME: "dev"
         MONGO_INITDB_ROOT_PASSWORD: "dev"
-    mongoexpress:
-      image: "mongo-express"
-      ports:
-        - "8003:8081"
-      depends_on:
-        - "mongo"
-      environment:
-        ME_CONFIG_MONGODB_SERVER: "mongo"
-        ME_CONFIG_MONGODB_ADMINUSERNAME: "dev"
-        ME_CONFIG_MONGODB_ADMINPASSWORD: "dev"
   volumes:
     mongo_db:
