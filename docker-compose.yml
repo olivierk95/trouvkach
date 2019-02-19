@@ -26,7 +26,7 @@
       environment:
         MONGO_INITDB_ROOT_USERNAME: "dev"
         MONGO_INITDB_ROOT_PASSWORD: "dev"
-    mongoexpress: 
+    mongoexpress:
       image: "mongo-express"
       ports:
         - "8003:8081"
