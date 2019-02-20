@@ -8,6 +8,20 @@
 
 import express from "express";
 import path from "path";
+import mongoose from "mongoose";
+
+mongoose.connect(
+    `mongodb+srv://${process.env.MONGO_ATLAS_LOGIN}:${
+        process.env.MONGO_ATLAS_PWD
+    }@trouvkach-becode-ph6as.mongodb.net/test?retryWrites=true`,
+);
+
+let db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+    console.log("Connected !!! Yeah !!!");
+});
 
 const {APP_PORT} = process.env;
 
@@ -23,5 +37,3 @@ app.get("/hello", (req, res) => {
 app.listen(APP_PORT, () =>
     console.log(`🚀 Server is listening on port ${APP_PORT}.`),
 );
-
-// const uri = "mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-01-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-02-ph6as.mongodb.net:27017/test?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true";
