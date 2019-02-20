@@ -2,7 +2,7 @@
   "name": "@becode/trouvkach",
   "version": "0.0.1",
   "description": "A simple react/node app, locating the ATMs nearby.",
-  "author": "leny <leny@becode.org>",
+  "author": "olivierk95, badouuuuuu, rafacolsn",
   "license": "MIT",
   "private": true,
   "scripts": {
