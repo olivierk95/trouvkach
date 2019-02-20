@@ -7,7 +7,7 @@
         NODE_ENV: "development"
         APP_PORT: 12345
         MONGO_ATLAS_LOGIN: "bestdev"
-        MONGO_ATLAS_PASSWORD: "bestdev"
+        MONGO_ATLAS_PWD: "bestdev"
       volumes:
         - "./package.json:/src/app/package.json"
         - "./node_modules:/src/app/node_modules"

@@ -2,7 +2,7 @@
   "name": "@becode/trouvkach",
   "version": "0.0.1",
   "description": "A simple react/node app, locating the ATMs nearby.",
-  "author": "leny <leny@becode.org>",
+  "author": "olivierk95, badouuuuuu, rafacolsn",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -43,9 +43,10 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "css-loader": "^2.1.0",
-    "emotion": "^10.0.7",
     "express": "^4.16.4",
+    "mongodb": "^3.1.13",
     "mongoose": "^5.4.14",
     "node-sass": "^4.11.0",
     "react": "^16.7.0",

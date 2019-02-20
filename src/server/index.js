@@ -9,23 +9,18 @@
 import express from "express";
 import path from "path";
 import mongoose from "mongoose";
+import bank from "./routes/bank";
+import bodyParser from "body-parser";
 
-const db_login = process.env.MONGO_ATLAS_LOGIN;
-const db_password = process.env.MONGO_ATLAS_PASSWORD;
-
-// Database connection : https://cloud.mongodb.com/
 mongoose.connect(
-    `mongodb+srv://${db_login}:${db_password}@trouvkach-becode-ph6as.mongodb.net/admin`,
+    `mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017/trouvkach?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true`,
 );
 
-const db = mongoose.connection;
+let db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error:"));
-
 db.once("open", () => {
-    console.log(
-        "----------🚀❤️ 🙉 Connected to MongoDB Atlas 🙉 ❤️🚀----------",
-    );
+    console.log("Connected !!! Yeah !!!");
 });
 
 const {APP_PORT} = process.env;
@@ -34,11 +29,23 @@ const app = express();
 
 app.use(express.static(path.resolve(__dirname, "../../bin/client")));
 
-app.get("/hello", (req, res) => {
-    console.log(`ℹ️  (${req.method.toUpperCase()}) ${req.url}`);
-    res.send("Hello, World!");
-});
+app.use("/api/bank", bank);
+
+app.use(bodyParser.json());
+
+// app.get("/hello", (req, res) => {
+//     console.log(`ℹ️  (${req.method.toUpperCase()}) ${req.url}`);
+//     res.send("Hello, World!");
+// });
 
 app.listen(APP_PORT, () =>
     console.log(`🚀 Server is listening on port ${APP_PORT}.`),
 );
+
+// app.get('/', (req, res) => {
+//     var results = db.collection('banks').find({})
+//     console.log(results);
+//     res.send({results: results});
+// });
+
+export default db;
