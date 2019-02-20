@@ -1,11 +1,6 @@
-import express from "express";
-import banks from "../models/banks.js";
+const banks = require("../models/banks");
 
-const app = express();
-
-/* GET ALL BANKS */
-
-app.get("/", (req, res) => {
+const show = (req, res) => {
     banks
         .find()
         .then(banksItem => {
@@ -14,9 +9,9 @@ app.get("/", (req, res) => {
         .catch(err => {
             res.status(500).send({errors: [err.message]});
         });
-});
+};
 
-/* GET SINGLE Bank BY ID */
+/* GET SINGLE Bank BY ID 
 app.get("/:id", (req, res, next) => {
     banks.findById(req.params.id, (err, post) => {
         if (err) {
@@ -25,8 +20,9 @@ app.get("/:id", (req, res, next) => {
         res.json(post);
     });
 });
+*/
 
-/* SAVE Bank */
+/* SAVE Bank
 app.post("/", (req, res, next) => {
     banks.create(req.body, (err, post) => {
         if (err) {
@@ -35,8 +31,9 @@ app.post("/", (req, res, next) => {
         res.json(post);
     });
 });
+ */
 
-/* UPDATE Bank */
+/* UPDATE Bank
 app.put("/:id", (req, res, next) => {
     banks.findByIdAndUpdate(req.params.id, req.body, (err, post) => {
         if (err) {
@@ -45,6 +42,7 @@ app.put("/:id", (req, res, next) => {
         res.json(post);
     });
 });
+ */
 
 // /* DELETE Bank */
 // app.delete("/:id", function(req, res, next) {
@@ -54,4 +52,4 @@ app.put("/:id", (req, res, next) => {
 //     });
 // });
 
-module.exports = app;
+exports.show = show;
