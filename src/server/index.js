@@ -23,3 +23,5 @@ app.get("/hello", (req, res) => {
 app.listen(APP_PORT, () =>
     console.log(`🚀 Server is listening on port ${APP_PORT}.`),
 );
+
+// const uri = "mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-01-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-02-ph6as.mongodb.net:27017/test?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true";

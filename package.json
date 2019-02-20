@@ -2,7 +2,7 @@
   "name": "@becode/trouvkach",
   "version": "0.0.1",
   "description": "A simple react/node app, locating the ATMs nearby.",
-  "author": "leny <leny@becode.org>",
+  "author": "olivierk95, badouuuuuu, rafacolsn",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "express": "^4.16.4",
+    "mongodb": "^3.1.13",
     "react": "^16.7.0",
     "react-dom": "^16.7.0"
   },

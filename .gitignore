@@ -1,4 +1,3 @@
-
 # Logs
 logs
 *.log
@@ -62,6 +61,3 @@ typings/
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
-
-# pour le mac de Laura
-.DS_store
