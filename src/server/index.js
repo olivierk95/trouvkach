@@ -8,6 +8,10 @@
 
 import express from "express";
 import path from "path";
+import router from "./routes/terminal";
+
+// Body Parser
+const bodyParser = require("body-parser");
 
 const {APP_PORT} = process.env;
 
@@ -24,4 +28,34 @@ app.listen(APP_PORT, () =>
     console.log(`🚀 Server is listening on port ${APP_PORT}.`),
 );
 
-// const uri = "mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-01-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-02-ph6as.mongodb.net:27017/test?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true";
+// Connection à la base de donnée
+const mongoose = require("mongoose");
+
+const uri = "mongodb://mongo/trouvkach";
+const connOptions = {
+    useNewUrlParser: true,
+    authsource: "admin",
+    user: "dev",
+    pass: "dev",
+};
+
+mongoose
+    .connect(uri, connOptions)
+    .then(() => console.log("connected"))
+    .catch(err => console.log(err));
+
+const db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "connection error:"));
+
+db.once("open", () => {
+    console.log("connected");
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.use(express.static(path.resolve(__dirname, "../../bin/client")));
+app.use("/api", router);
+
+module.exports = db;
