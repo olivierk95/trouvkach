@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const schema = new mongoose.Schema(
+const banksSchema = new mongoose.Schema(
     {
         country: String,
         color: String,
@@ -14,4 +14,4 @@ const schema = new mongoose.Schema(
     {collection: "banks"},
 );
 
-export default mongoose.model("banks", schema);
+module.exports = mongoose.model("banks", banksSchema);
