@@ -10,6 +10,8 @@ import express from "express";
 import path from "path";
 import mongoose from "mongoose";
 import bank from "./routes/bank";
+import router from "./routes/terminal";
+
 import bodyParser from "body-parser";
 
 mongoose.connect(
@@ -28,7 +30,7 @@ const {APP_PORT} = process.env;
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, "../../bin/client")));
-
+app.use("/api", router);
 app.use("/api/bank", bank);
 
 app.use(bodyParser.json());
