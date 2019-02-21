@@ -7,6 +7,7 @@
  */
 
 import * as React from "react";
+import SimpleMap from "./SimpleMap";
 
 import Map from "./map";
 import "../scss/app.scss";
@@ -19,7 +20,7 @@ export default class AtmMap extends React.Component {
                 <hr />
                 <br />
                 <div>
-                    <Map />
+                    <SimpleMap />
                 </div>
             </div>
         );

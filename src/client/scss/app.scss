@@ -1,9 +1,16 @@
-html{
-    background-color: #1A2632;
-}
-
 .container {
     margin: 0 auto;
     flex-direction: row;
     text-align: center;
 }
+#map {
+    height: 100%;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #1A2632;
+    color: white
+  }

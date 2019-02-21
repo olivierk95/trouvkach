@@ -9,5 +9,7 @@ router.get("/terminals", TerminalsController.show);
 
 /* GET ALL BANKS */
 router.get("/bank", banksController.show);
+router.get("/bank/:id", banksController.showById);
+
 
 export default router;
