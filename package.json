@@ -46,6 +46,7 @@
     "body-parser": "^1.18.3",
     "css-loader": "^2.1.0",
     "express": "^4.16.4",
+    "mathjs": "^5.5.0",
     "mongodb": "^3.1.13",
     "mongoose": "^5.4.14",
     "node-sass": "^4.11.0",
