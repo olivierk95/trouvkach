@@ -9,7 +9,7 @@
 import express from "express";
 import path from "path";
 import mongoose from "mongoose";
-import router from "./routes/terminal";
+import router from "./routes/routes";
 
 import bodyParser from "body-parser";
 
