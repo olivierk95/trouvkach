@@ -1,13 +1,13 @@
 import React, {Component} from "react";
-import {Map, GoogleApiWrapper} from "google-maps-react";
-
-const mapStyles = {
-    width: "100%",
-    height: "100%",
-};
+import {
+    Map,
+    GoogleApiWrapper as googleApiWrapper,
+    InfoWindow,
+    Marker,
+} from "google-maps-react";
 
 let center = {lat: "", lng: ""},
-    zoom = 19;
+    zoom = 18;
 
 const options = {
     enableHighAccuracy: true,
@@ -26,20 +26,59 @@ const success = pos => {
 };
 
 navigator.geolocation.getCurrentPosition(success, error, options);
-
 export class MapContainer extends Component {
+    state = {
+        showingInfoWindow: false, //Hides or the shows the infoWindow
+        activeMarker: {}, //Shows the active marker upon click
+        selectedPlace: {}, //Shows the infoWindow to the selected place upon a marker
+    };
+
+    onMarkerClick = (props, marker, e) =>
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true,
+        });
+
+    onClose = props => {
+        if (this.state.showingInfoWindow) {
+            this.setState({
+                showingInfoWindow: false,
+                activeMarker: null,
+            });
+        }
+    };
+
     render() {
+        const mapStyles = {
+            width: "95%",
+            height: "75%",
+            margin: "0 auto",
+        };
+
         return (
             <Map
                 google={this.props.google}
                 zoom={zoom}
                 style={mapStyles}
-                initialCenter={center}
-            />
+                initialCenter={center}>
+                <Marker
+                    onClick={this.onMarkerClick}
+                    name={"Kenyatta International Convention Centre"}
+                />
+                <InfoWindow
+                    marker={this.state.activeMarker}
+                    visible={this.state.showingInfoWindow}
+                    onClose={this.onClose}>
+                    <div>
+                        <h4>{this.state.selectedPlace.name}</h4>
+                    </div>
+                </InfoWindow>
+            </Map>
         );
     }
 }
 
-export default GoogleApiWrapper({
+export default googleApiWrapper({
     apiKey: "AIzaSyDalvpxv-7crRgGa3MNhZiWIClcM1urB2o",
 })(MapContainer);
