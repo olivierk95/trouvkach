@@ -67,10 +67,11 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const fetchTerminalsInfos = Object.values(this.state.terminals).forEach(element => {
-            return element.address;
-        });
-
+        const fetchTerminalsInfos = Object.values(this.state.terminals).forEach(
+            element => {
+                return element.address;
+            },
+        );
 
         console.log(fetchTerminalsInfos);
 
