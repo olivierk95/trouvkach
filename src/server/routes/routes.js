@@ -11,5 +11,4 @@ router.get("/terminals", TerminalsController.show);
 router.get("/bank", banksController.show);
 router.get("/bank/:id", banksController.showById);
 
-
 export default router;

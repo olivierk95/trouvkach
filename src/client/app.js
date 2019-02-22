@@ -9,7 +9,6 @@
 import * as React from "react";
 import ReactDOM from "react-dom";
 import "./calculate_distance";
-import "./getPosition";
 
 import AtmMap from "./components/AtmMap";
 

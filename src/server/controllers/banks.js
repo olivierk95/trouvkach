@@ -23,10 +23,7 @@ const showById = (req, res) => {
         });
 };
 
-//UPDATE BANK 
-const updateById = 
+// UPDATE BANK
+const updateById = (exports.show = show);
 
-
-exports.show = show;
 exports.showById = showById;
-
