@@ -1,13 +1,14 @@
 import React, {Component} from "react";
-import {Map, GoogleApiWrapper as googleApiWrapper} from "google-maps-react";
-
-const mapStyles = {
-    width: "100%",
-    height: "100%",
-};
+import {
+    Map,
+    GoogleApiWrapper as googleApiWrapper,
+    InfoWindow,
+    Marker,
+} from "google-maps-react";
+import axios from "axios";
 
 let center = {lat: "", lng: ""},
-    zoom = 19;
+    zoom = 18;
 
 const options = {
     enableHighAccuracy: true,
@@ -26,16 +27,85 @@ const success = pos => {
 };
 
 navigator.geolocation.getCurrentPosition(success, error, options);
-
 export class MapContainer extends Component {
+    state = {
+        showingInfoWindow: false, // Hides or the shows the infoWindow
+        activeMarker: {}, // Shows the active marker upon click
+        selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
+        terminals: [],
+    };
+
+    componentDidMount() {
+        axios
+            .get(`/api/terminals`)
+            .then(res => {
+                const terminals = res.data.terminals;
+
+                this.setState({terminals});
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    onMarkerClick = (props, marker) =>
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true,
+        });
+
+    onClose = () => {
+        if (this.state.showingInfoWindow) {
+            this.setState({
+                showingInfoWindow: false,
+                activeMarker: null,
+            });
+        }
+    };
+
     render() {
+        const mapStyles = {
+            width: "95%",
+            height: "75%",
+            margin: "0 auto",
+        };
+
+        const markerAllTerminals = Object.values(this.state.terminals).forEach(
+            terminal => {
+                console.log(terminal.address);
+                return (
+                    <div>
+                        <Marker
+                            key={terminal._id}
+                            onClick={this.onMarkerClick}
+                            name={terminal.address}
+                            position={{
+                                lat: terminal.latitude,
+                                lng: terminal.longitude,
+                            }}
+                        />
+                        <InfoWindow
+                            marker={this.state.activeMarker}
+                            visible={this.state.showingInfoWindow}
+                            onClose={this.onClose}>
+                            <div>
+                                <h4>{this.state.selectedPlace.name}</h4>
+                            </div>
+                        </InfoWindow>
+                    </div>
+                );
+            },
+        );
+
         return (
             <Map
                 google={this.props.google}
                 zoom={zoom}
                 style={mapStyles}
-                initialCenter={center}
-            />
+                initialCenter={center}>
+                {markerAllTerminals}
+            </Map>
         );
     }
 }
