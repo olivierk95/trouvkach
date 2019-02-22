@@ -33,7 +33,7 @@ export class MapContainer extends Component {
         showingInfoWindow: false, // Hides or the shows the infoWindow
         activeMarker: {}, // Shows the active marker upon click
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
-        terminals: {}, // fetch all terminals
+        terminals: [], // fetch all terminals
     };
 
     componentDidMount() {
