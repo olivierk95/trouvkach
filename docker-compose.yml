@@ -8,6 +8,7 @@
         APP_PORT: 12345
         MONGO_ATLAS_LOGIN: "bestdev"
         MONGO_ATLAS_PWD: "bestdev"
+        API_GOOGLE_MAP_KEY : "AIzaSyDalvpxv-7crRgGa3MNhZiWIClcM1urB2o"
       volumes:
         - "./package.json:/src/app/package.json"
         - "./node_modules:/src/app/node_modules"
