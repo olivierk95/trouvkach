@@ -6,9 +6,10 @@ import {
     InfoWindow,
     Marker,
 } from "google-maps-react";
+import {log, formatWithOptions} from "util";
 
 let center = {lat: "", lng: ""},
-    zoom = 18;
+    zoom = 8;
 
 const options = {
     enableHighAccuracy: true,
@@ -34,12 +35,14 @@ export class MapContainer extends Component {
         activeMarker: {}, // Shows the active marker upon click
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
         terminals: [], // fetch all terminals
+        loading: false,
     };
 
     componentDidMount() {
         axios.get(`/api/terminals`).then(res => {
             this.setState({
-                terminals: res.data,
+                terminals: res.data.terminals,
+                loading: true,
             });
         });
     }
@@ -67,71 +70,38 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const fetchTerminalsInfos = Object.values(this.state.terminals).forEach(
-            element => {
-                return element.address;
-            },
-        );
-
-        console.log(fetchTerminalsInfos);
-
-        // myTerminals[0] = {lat: el[0].latitude, lng: el[0].longitude}
+        const renderMarkers = this.state.terminals
+            .filter(item => item.address != null)
+            .map(el => {
+                return (
+                    <Marker
+                        key={el._id}
+                        onClick={this.onMarkerClick}
+                        name={el.address}
+                        position={{lat: el.latitude, lng: el.longitude}}
+                    />
+                );
+            });
 
         return (
-            <Map
-                google={this.props.google}
-                zoom={zoom}
-                style={mapStyles}
-                initialCenter={center}>
-                <Marker onClick={this.onMarkerClick} name={"You're here"} />
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}
-                    onClose={this.onClose}>
-                    <div>
-                        <h4>{this.state.selectedPlace.name}</h4>
-                    </div>
-                </InfoWindow>
-                {/* <Marker
-                    onClick={this.onMarkerClick}
-                    name={"ATM here"}
-                    position={myTerminals[0]}
-                />
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}
-                    onClose={this.onClose}>
-                    <div>
-                        <h4>{this.state.selectedPlace.name}</h4>
-                    </div>
-                </InfoWindow>
-                <Marker
-                    onClick={this.onMarkerClick}
-                    name={"ATM"}
-                    position={myTerminals[1]}
-                />
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}
-                    onClose={this.onClose}>
-                    <div>
-                        <h4>{this.state.selectedPlace.name}</h4>
-                    </div>
-                </InfoWindow>
-                <Marker
-                    onClick={this.onMarkerClick}
-                    name={"bank"}
-                    position={myTerminals[2]}
-                />
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}
-                    onClose={this.onClose}>
-                    <div>
-                        <h4>{this.state.selectedPlace.name}</h4>
-                    </div>
-                </InfoWindow> */}
-            </Map>
+            <>
+                <Map
+                    google={this.props.google}
+                    zoom={zoom}
+                    style={mapStyles}
+                    initialCenter={center}>
+                    <Marker onClick={this.onMarkerClick} name={"You're here"} />
+                    <InfoWindow
+                        marker={this.state.activeMarker}
+                        visible={this.state.showingInfoWindow}
+                        onClose={this.onClose}>
+                        <div>
+                            <h4>{this.state.selectedPlace.name}</h4>
+                        </div>
+                    </InfoWindow>
+                    {this.state.loading && renderMarkers}
+                </Map>
+            </>
         );
     }
 }
