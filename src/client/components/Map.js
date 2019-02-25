@@ -33,15 +33,17 @@ export class MapContainer extends Component {
         activeMarker: {}, // Shows the active marker upon click
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
         terminals: [],
+        loading: false,
     };
 
     componentDidMount() {
         axios
             .get(`/api/terminals`)
             .then(res => {
-                const terminals = res.data.terminals;
-
-                this.setState({terminals});
+                this.setState({
+                    terminals: res.data.terminals,
+                    loading: true,
+                });
             })
             .catch(err => {
                 console.log(err);
@@ -71,32 +73,23 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const markerAllTerminals = Object.values(this.state.terminals).forEach(
-            terminal => {
-                console.log(terminal.address);
+        const markerAllTerminals = Object.values(this.state.terminals)
+            .filter(terminal => terminal.address && terminal.longitude > 6)
+            .map(terminal => {
+                console.log(terminal);
+                console.log(terminal.longitude);
                 return (
-                    <div>
-                        <Marker
-                            key={terminal._id}
-                            onClick={this.onMarkerClick}
-                            name={terminal.address}
-                            position={{
-                                lat: terminal.latitude,
-                                lng: terminal.longitude,
-                            }}
-                        />
-                        <InfoWindow
-                            marker={this.state.activeMarker}
-                            visible={this.state.showingInfoWindow}
-                            onClose={this.onClose}>
-                            <div>
-                                <h4>{this.state.selectedPlace.name}</h4>
-                            </div>
-                        </InfoWindow>
-                    </div>
+                    <Marker
+                        onClick={this.onMarkerClick}
+                        key={terminal._id}
+                        name={terminal.address}
+                        position={{
+                            lat: terminal.latitude,
+                            lng: terminal.longitude,
+                        }}
+                    />
                 );
-            },
-        );
+            });
 
         return (
             <Map
@@ -104,7 +97,24 @@ export class MapContainer extends Component {
                 zoom={zoom}
                 style={mapStyles}
                 initialCenter={center}>
-                {markerAllTerminals}
+                <Marker onClick={this.onMarkerClick} name={"T'es ici fdp"} />
+                <InfoWindow
+                    marker={this.state.activeMarker}
+                    visible={this.state.showingInfoWindow}
+                    onClose={this.onClose}>
+                    <div>
+                        <h4>{this.state.selectedPlace.name}</h4>
+                    </div>
+                </InfoWindow>
+                {this.state.loading && markerAllTerminals}
+                <InfoWindow
+                    marker={this.state.activeMarker}
+                    visible={this.state.showingInfoWindow}
+                    onClose={this.onClose}>
+                    <div>
+                        <h4>{this.state.selectedPlace.name}</h4>
+                    </div>
+                </InfoWindow>
             </Map>
         );
     }
