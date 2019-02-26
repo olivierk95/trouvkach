@@ -12,6 +12,7 @@ import distance from "../calculate_distance";
 
 import terminalSpot from "../images/terminal-spot.png";
 
+
 let center = {lat: "", lng: ""},
     zoom = 15;
 
@@ -42,6 +43,7 @@ export class MapContainer extends Component {
         loading: false,
         clickedTerm: {lat: 0, lng: 0},
         distance: 0,
+        bankTerminalsName:[],
     };
 
     componentDidMount() {
@@ -93,7 +95,20 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const renderMarkers = this.state.terminals.map(el => {
+        const renderMarkers = this.state.terminals
+        .filter(item => item.address != null || item.address != undefined)
+        .map(el => {
+
+
+            try {
+ 
+              console.log(Object.values(el.bank)[4])
+              
+            } catch (error) {
+                console.warn(error)
+            }
+
+
             return (
                 <Marker
                     key={el._id}
@@ -176,5 +191,5 @@ export class MapContainer extends Component {
 }
 
 export default googleApiWrapper({
-    apiKey: "AIzaSyDalvpxv-7crRgGa3MNhZiWIClcM1urB2o",
+    apiKey: process.env.API_GOOGLE_MAP_KEY,
 })(MapContainer);
