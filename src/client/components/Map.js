@@ -36,6 +36,7 @@ export class MapContainer extends Component {
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
         terminals: [], // fetch all terminals
         loading: false,
+        clickedTerm: {lat: null, lng: null}
     };
 
     componentDidMount() {
@@ -52,7 +53,13 @@ export class MapContainer extends Component {
             selectedPlace: props,
             activeMarker: marker,
             showingInfoWindow: true,
+            clickedTerm: {
+                lat: props.position.lat,
+                lng: props.position.lng
+            }
         });
+
+        
 
     onClose = () => {
         if (this.state.showingInfoWindow) {
@@ -73,6 +80,7 @@ export class MapContainer extends Component {
         const renderMarkers = this.state.terminals
             .filter(item => item.address != null)
             .map(el => {
+                
                 return (
                     <Marker
                         key={el._id}
@@ -80,6 +88,7 @@ export class MapContainer extends Component {
                         name={el.address}
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
+                
                 );
             });
 
@@ -93,11 +102,11 @@ export class MapContainer extends Component {
                     <Polyline
                         path={[
                             {lat: center.lat, lng: center.lng},
-                            {lat: 50.6802, lng: 5.548},
+                            {lat: this.state.clickedTerm.lat, lng: this.state.clickedTerm.lng},
                         ]}
                         strokeColor="#EB6123"
                         strokeOpacity={0.8}
-                        strokeWeight={5}
+                        strokeWeight={2}
                     />
 
                     <Marker onClick={this.onMarkerClick} name={"You're here"} />
