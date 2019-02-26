@@ -32,3 +32,5 @@ const distance = (lat1, long1, lat2, long2, unit = "k") => {
 // const calcul = distance(50.632903, 5.585911, 50.635207, 5.587967, "m");
 
 // console.log(calcul);
+
+export default distance;

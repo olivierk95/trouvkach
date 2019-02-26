@@ -8,6 +8,7 @@ import {
     Polyline,
 } from "google-maps-react";
 import gif from "../assets/gif/giphy.gif";
+import distance from "../calculate_distance";
 
 let center = {lat: "", lng: ""},
     zoom = 15;
@@ -37,7 +38,8 @@ export class MapContainer extends Component {
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
         terminals: [], // fetch all terminals
         loading: false,
-        clickedTerm: {lat: null, lng: null}
+        clickedTerm: {lat: null, lng: null},
+        distance: null,
     };
 
     componentDidMount() {
@@ -61,25 +63,31 @@ export class MapContainer extends Component {
                 });
             });
     }
-
-    onMarkerClick = (props, marker, e) =>
+    onMarkerClick = (props, marker, e) => {
         this.setState({
             selectedPlace: props,
             activeMarker: marker,
             showingInfoWindow: true,
             clickedTerm: {
                 lat: props.position.lat,
-                lng: props.position.lng
-            }
+                lng: props.position.lng,
+            },
+            distance: distance(
+                props.position.lat,
+                props.position.lng,
+                center.lat,
+                center.lng,
+                "k",
+            ).toFixed(2),
         });
-
-        
+    };
 
     onClose = () => {
         if (this.state.showingInfoWindow) {
             this.setState({
                 showingInfoWindow: false,
                 activeMarker: null,
+                distance: null,
             });
         }
     };
@@ -91,21 +99,22 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const renderMarkers = this.state.terminals
-            .filter(item => item.address != null)
-            .map(el => {
-                
-                return (
-                    <Marker
-                        key={el._id}
-                        onClick={this.onMarkerClick}
-                        name={el.address}
-                        title={el.address}
-                        position={{lat: el.latitude, lng: el.longitude}}
-                    />
-                
-                );
-            });
+        const renderMarkers = this.state.terminals.map(el => {
+            return (
+                <Marker
+                    key={el._id}
+                    onClick={this.onMarkerClick}
+                    name={
+                        el.address +
+                        " se trouve à " +
+                        this.state.distance +
+                        " km"
+                    }
+                    title={el.address}
+                    position={{lat: el.latitude, lng: el.longitude}}
+                />
+            );
+        });
 
         return (
             <>
@@ -121,15 +130,18 @@ export class MapContainer extends Component {
                         zoom={zoom}
                         style={mapStyles}
                         initialCenter={center}>
-                    <Polyline
-                        path={[
-                            {lat: center.lat, lng: center.lng},
-                            {lat: this.state.clickedTerm.lat, lng: this.state.clickedTerm.lng},
-                        ]}
-                        strokeColor="#EB6123"
-                        strokeOpacity={0.8}
-                        strokeWeight={3}
-                    />
+                        <Polyline
+                            path={[
+                                {lat: center.lat, lng: center.lng},
+                                {
+                                    lat: this.state.clickedTerm.lat,
+                                    lng: this.state.clickedTerm.lng,
+                                },
+                            ]}
+                            strokeColor="#EB6123"
+                            strokeOpacity={0.8}
+                            strokeWeight={3}
+                        />
 
                         <Marker
                             onClick={this.onMarkerClick}
