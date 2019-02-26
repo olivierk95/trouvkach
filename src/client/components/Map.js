@@ -1,14 +1,15 @@
 import React, {Component} from "react";
+import axios from "axios";
 import {
     Map,
     GoogleApiWrapper as googleApiWrapper,
     InfoWindow,
     Marker,
+    Polyline,
 } from "google-maps-react";
-import axios from "axios";
 
 let center = {lat: "", lng: ""},
-    zoom = 18;
+    zoom = 8;
 
 const options = {
     enableHighAccuracy: true,
@@ -33,25 +34,20 @@ export class MapContainer extends Component {
         showingInfoWindow: false, // Hides or the shows the infoWindow
         activeMarker: {}, // Shows the active marker upon click
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
-        terminals: [],
+        terminals: [], // fetch all terminals
         loading: false,
     };
 
     componentDidMount() {
-        axios
-            .get(`/api/terminals`)
-            .then(res => {
-                this.setState({
-                    terminals: res.data.terminals,
-                    loading: true,
-                });
-            })
-            .catch(err => {
-                console.log(err);
+        axios.get(`/api/terminals`).then(res => {
+            this.setState({
+                terminals: res.data.terminals,
+                loading: true,
             });
+        });
     }
 
-    onMarkerClick = (props, marker) =>
+    onMarkerClick = (props, marker, e) =>
         this.setState({
             selectedPlace: props,
             activeMarker: marker,
@@ -74,39 +70,49 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const markerAllTerminals = Object.values(this.state.terminals).map(
-            terminal => {
+        const renderMarkers = this.state.terminals
+            .filter(item => item.address != null)
+            .map(el => {
                 return (
                     <Marker
+                        key={el._id}
                         onClick={this.onMarkerClick}
-                        key={terminal._id}
-                        name={terminal.address}
-                        position={{
-                            lat: terminal.latitude,
-                            lng: terminal.longitude,
-                        }}
+                        name={el.address}
+                        position={{lat: el.latitude, lng: el.longitude}}
                     />
                 );
-            },
-        );
+            });
 
         return (
-            <Map
-                google={this.props.google}
-                zoom={zoom}
-                style={mapStyles}
-                initialCenter={center}>
-                <Marker onClick={this.onMarkerClick} name={"T'es ici fdp"} />
-                {this.state.loading && markerAllTerminals}
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}
-                    onClose={this.onClose}>
-                    <div>
-                        <h4>{this.state.selectedPlace.name}</h4>
-                    </div>
-                </InfoWindow>
-            </Map>
+            <>
+                <Map
+                    google={this.props.google}
+                    zoom={zoom}
+                    style={mapStyles}
+                    initialCenter={center}>
+                    <Polyline
+                        path={[
+                            {lat: center.lat, lng: center.lng},
+                            {lat: 50.6802, lng: 5.548},
+                        ]}
+                        strokeColor="#EB6123"
+                        strokeOpacity={0.8}
+                        strokeWeight={5}
+                    />
+
+                    <Marker onClick={this.onMarkerClick} name={"You're here"} />
+                    {this.state.loading && renderMarkers}
+
+                    <InfoWindow
+                        marker={this.state.activeMarker}
+                        visible={this.state.showingInfoWindow}
+                        onClose={this.onClose}>
+                        <div>
+                            <h4>{this.state.selectedPlace.name}</h4>
+                        </div>
+                    </InfoWindow>
+                </Map>
+            </>
         );
     }
 }

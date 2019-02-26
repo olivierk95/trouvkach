@@ -13,9 +13,9 @@ import router from "./routes.js";
 
 import bodyParser from "body-parser";
 
- mongoose.connect(
-     `mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017/trouvkach?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true`,
- );
+mongoose.connect(
+    `mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017/trouvkach?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true`,
+);
 
 // mongoose.connect(`mongodb://dev:dev@mongo:27017/trouvkach?authSource=admin`);
 
