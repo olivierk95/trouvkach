@@ -27,6 +27,7 @@ const success = pos => {
 };
 
 navigator.geolocation.getCurrentPosition(success, error, options);
+
 export class MapContainer extends Component {
     state = {
         showingInfoWindow: false, // Hides or the shows the infoWindow
@@ -73,11 +74,8 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const markerAllTerminals = Object.values(this.state.terminals)
-            .filter(terminal => terminal.address && terminal.longitude > 6)
-            .map(terminal => {
-                console.log(terminal);
-                console.log(terminal.longitude);
+        const markerAllTerminals = Object.values(this.state.terminals).map(
+            terminal => {
                 return (
                     <Marker
                         onClick={this.onMarkerClick}
@@ -89,7 +87,8 @@ export class MapContainer extends Component {
                         }}
                     />
                 );
-            });
+            },
+        );
 
         return (
             <Map
@@ -98,14 +97,6 @@ export class MapContainer extends Component {
                 style={mapStyles}
                 initialCenter={center}>
                 <Marker onClick={this.onMarkerClick} name={"T'es ici fdp"} />
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={this.state.showingInfoWindow}
-                    onClose={this.onClose}>
-                    <div>
-                        <h4>{this.state.selectedPlace.name}</h4>
-                    </div>
-                </InfoWindow>
                 {this.state.loading && markerAllTerminals}
                 <InfoWindow
                     marker={this.state.activeMarker}
