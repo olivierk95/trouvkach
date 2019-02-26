@@ -35,11 +35,6 @@ app.use("/api", router);
 
 app.use(bodyParser.json());
 
-// app.get("/hello", (req, res) => {
-//     console.log(`ℹ️  (${req.method.toUpperCase()}) ${req.url}`);
-//     res.send("Hello, World!");
-// });
-
 app.listen(APP_PORT, () =>
     console.log(`🚀 Server is listening on port ${APP_PORT}.`),
 );
