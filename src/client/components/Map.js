@@ -12,7 +12,6 @@ import distance from "../calculate_distance";
 
 import terminalSpot from "../images/terminal-spot.png";
 
-
 let center = {lat: "", lng: ""},
     zoom = 15;
 
@@ -43,7 +42,7 @@ export class MapContainer extends Component {
         loading: false,
         clickedTerm: {lat: 0, lng: 0},
         distance: 0,
-        bankTerminalsName:[],
+        bankTerminalsName: [],
     };
 
     componentDidMount() {
@@ -96,46 +95,41 @@ export class MapContainer extends Component {
         };
 
         const renderMarkers = this.state.terminals
-        .filter(item => item.address != null || item.address != undefined)
-        .map(el => {
+            .filter(item => item.address != null || item.address != undefined)
+            .map(el => {
+                try {
+                    console.log(Object.values(el.bank)[4]);
+                } catch (error) {
+                    console.warn(error);
+                }
 
-
-            try {
- 
-              console.log(Object.values(el.bank)[4])
-              
-            } catch (error) {
-                console.warn(error)
-            }
-
-
-            return (
-                <Marker
-                    key={el._id}
-                    onClick={this.onMarkerClick}
-                    name={
-                        !el.address
-                            ? `${"N/A se trouve à "}${distance(
-                                  el.latitude,
-                                  el.longitude,
-                                  center.lat,
-                                  center.lng,
-                                  "k",
-                              ).toFixed(2)} km`
-                            : `${el.address} se trouve à ${distance(
-                                  el.latitude,
-                                  el.longitude,
-                                  center.lat,
-                                  center.lng,
-                                  "k",
-                              ).toFixed(2)} km`
-                    }
-                    title={el.address}
-                    icon={terminalSpot}
-                    position={{lat: el.latitude, lng: el.longitude}}
-                />
-            );
-        });
+                return (
+                    <Marker
+                        key={el._id}
+                        onClick={this.onMarkerClick}
+                        name={
+                            !el.address
+                                ? `${"N/A se trouve à "}${distance(
+                                      el.latitude,
+                                      el.longitude,
+                                      center.lat,
+                                      center.lng,
+                                      "k",
+                                  ).toFixed(2)} km`
+                                : `${el.address} se trouve à ${distance(
+                                      el.latitude,
+                                      el.longitude,
+                                      center.lat,
+                                      center.lng,
+                                      "k",
+                                  ).toFixed(2)} km`
+                        }
+                        title={el.address}
+                        icon={terminalSpot}
+                        position={{lat: el.latitude, lng: el.longitude}}
+                    />
+                );
+            });
 
         return (
             <>
