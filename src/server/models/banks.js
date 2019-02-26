@@ -14,4 +14,4 @@ const banksSchema = new mongoose.Schema(
     {collection: "banks"},
 );
 
-module.exports = mongoose.model("banks", banksSchema);
+module.exports = mongoose.model("Bank", banksSchema);

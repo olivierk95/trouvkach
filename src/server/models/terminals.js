@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
 
 const TerminalSchema = new Schema(
     {
         bank: {
-            type: ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "Bank",
         },
         latitude: Number,

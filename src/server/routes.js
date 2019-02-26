@@ -7,6 +7,7 @@ const router = new express.Router();
 /* GET ALL TERMINALS */
 router.get("/terminals", terminalsController.show);
 router.get("/terminals/:id", terminalsController.showById);
+router.get("/pos/:lat1/:lat2/:lng1/:lng2", terminalsController.getByPosition);
 
 router.get("/banks", banksController.show);
 router.get("/banks/:id", banksController.showById);

@@ -13,11 +13,11 @@ import router from "./routes.js";
 
 import bodyParser from "body-parser";
 
-// mongoose.connect(
-//     `mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017/trouvkach?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true`,
-// );
+mongoose.connect(
+    `mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017/trouvkach?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true`,
+);
 
-mongoose.connect(`mongodb://dev:dev@mongo:27017/trouvkach?authSource=admin`);
+// mongoose.connect(`mongodb://dev:dev@mongo:27017/trouvkach?authSource=admin`);
 
 let db = mongoose.connection;
 
@@ -34,11 +34,6 @@ app.use(express.static(path.resolve(__dirname, "../../bin/client")));
 app.use("/api", router);
 
 app.use(bodyParser.json());
-
-// app.get("/hello", (req, res) => {
-//     console.log(`ℹ️  (${req.method.toUpperCase()}) ${req.url}`);
-//     res.send("Hello, World!");
-// });
 
 app.listen(APP_PORT, () =>
     console.log(`🚀 Server is listening on port ${APP_PORT}.`),
