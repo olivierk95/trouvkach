@@ -38,8 +38,8 @@ export class MapContainer extends Component {
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
         terminals: [], // fetch all terminals
         loading: false,
-        clickedTerm: {lat: null, lng: null},
-        distance: null,
+        clickedTerm: {lat: 0, lng: 0},
+        distance: 0,
     };
 
     componentDidMount() {
@@ -72,13 +72,6 @@ export class MapContainer extends Component {
                 lat: props.position.lat,
                 lng: props.position.lng,
             },
-            distance: distance(
-                props.position.lat,
-                props.position.lng,
-                center.lat,
-                center.lng,
-                "k",
-            ).toFixed(2),
         });
     };
 
@@ -87,7 +80,6 @@ export class MapContainer extends Component {
             this.setState({
                 showingInfoWindow: false,
                 activeMarker: null,
-                distance: null,
             });
         }
     };
@@ -105,10 +97,21 @@ export class MapContainer extends Component {
                     key={el._id}
                     onClick={this.onMarkerClick}
                     name={
-                        el.address +
-                        " se trouve à " +
-                        this.state.distance +
-                        " km"
+                        !el.address
+                            ? `${"N/A se trouve à "}${distance(
+                                  el.latitude,
+                                  el.longitude,
+                                  center.lat,
+                                  center.lng,
+                                  "k",
+                              ).toFixed(2)} km`
+                            : `${el.address} se trouve à ${distance(
+                                  el.latitude,
+                                  el.longitude,
+                                  center.lat,
+                                  center.lng,
+                                  "k",
+                              ).toFixed(2)} km`
                     }
                     title={el.address}
                     position={{lat: el.latitude, lng: el.longitude}}
@@ -130,24 +133,30 @@ export class MapContainer extends Component {
                         zoom={zoom}
                         style={mapStyles}
                         initialCenter={center}>
-                        <Polyline
-                            path={[
-                                {lat: center.lat, lng: center.lng},
-                                {
-                                    lat: this.state.clickedTerm.lat,
-                                    lng: this.state.clickedTerm.lng,
-                                },
-                            ]}
-                            strokeColor="#EB6123"
-                            strokeOpacity={0.8}
-                            strokeWeight={3}
-                        />
+                        {this.state.clickedTerm.lat !== 0 &&
+                        this.state.clickedTerm.lng !== 0 ? (
+                            <Polyline
+                                path={[
+                                    {lat: center.lat, lng: center.lng},
+                                    {
+                                        lat: this.state.clickedTerm.lat,
+                                        lng: this.state.clickedTerm.lng,
+                                    },
+                                ]}
+                                strokeColor="#EB6123"
+                                strokeOpacity={0.8}
+                                strokeWeight={3}
+                            />
+                        ) : (
+                            ""
+                        )}
 
                         <Marker
                             onClick={this.onMarkerClick}
                             name={"You're here"}
                         />
                         {renderMarkers}
+
                         <InfoWindow
                             marker={this.state.activeMarker}
                             visible={this.state.showingInfoWindow}
