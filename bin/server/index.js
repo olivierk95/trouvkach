@@ -31,8 +31,8 @@ const app = (0, _express.default)();
 app.use(_express.default.static(_path.default.resolve(__dirname, "../../bin/client")));
 app.use("/api", _routes.default);
 app.use(_bodyParser.default.json());
-const port = process.env.PORT;
-app.listen(port || 8000, () => console.log(`🚀 Server is listening on port ${port}.`));
+const port = process.env.PORT || 8000;
+app.listen(port, () => console.log(`🚀 Server is listening on port ${port}.`));
 var _default = db;
 exports.default = _default;
 //# sourceMappingURL=index.js.map
