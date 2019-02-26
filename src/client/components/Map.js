@@ -7,9 +7,10 @@ import {
     Marker,
     Polyline,
 } from "google-maps-react";
+import gif from "../assets/gif/giphy.gif";
 
 let center = {lat: "", lng: ""},
-    zoom = 8;
+    zoom = 15;
 
 const options = {
     enableHighAccuracy: true,
@@ -40,12 +41,25 @@ export class MapContainer extends Component {
     };
 
     componentDidMount() {
-        axios.get(`/api/terminals`).then(res => {
-            this.setState({
-                terminals: res.data.terminals,
-                loading: true,
+        let aroundCenter = {
+            lat1: center.lat + 0.02,
+            lng1: center.lng + 0.04,
+            lat2: center.lat - 0.02,
+            lng2: center.lng - 0.04,
+        };
+
+        axios
+            .get(
+                `/api/pos/${aroundCenter.lat1}/${aroundCenter.lat2}/${
+                    aroundCenter.lng1
+                }/${aroundCenter.lng2}`,
+            )
+            .then(res => {
+                this.setState({
+                    terminals: res.data.terminals,
+                    loading: true,
+                });
             });
-        });
     }
 
     onMarkerClick = (props, marker, e) =>
@@ -86,6 +100,7 @@ export class MapContainer extends Component {
                         key={el._id}
                         onClick={this.onMarkerClick}
                         name={el.address}
+                        title={el.address}
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
                 
@@ -94,11 +109,18 @@ export class MapContainer extends Component {
 
         return (
             <>
-                <Map
-                    google={this.props.google}
-                    zoom={zoom}
-                    style={mapStyles}
-                    initialCenter={center}>
+                {!this.state.loading && (
+                    <div>
+                        <h3>{"Don't worry ! It's loading..."}</h3>
+                        <img src={gif} alt="loading" />
+                    </div>
+                )}
+                {this.state.loading && (
+                    <Map
+                        google={this.props.google}
+                        zoom={zoom}
+                        style={mapStyles}
+                        initialCenter={center}>
                     <Polyline
                         path={[
                             {lat: center.lat, lng: center.lng},
@@ -106,21 +128,24 @@ export class MapContainer extends Component {
                         ]}
                         strokeColor="#EB6123"
                         strokeOpacity={0.8}
-                        strokeWeight={2}
+                        strokeWeight={3}
                     />
 
-                    <Marker onClick={this.onMarkerClick} name={"You're here"} />
-                    {this.state.loading && renderMarkers}
-
-                    <InfoWindow
-                        marker={this.state.activeMarker}
-                        visible={this.state.showingInfoWindow}
-                        onClose={this.onClose}>
-                        <div>
-                            <h4>{this.state.selectedPlace.name}</h4>
-                        </div>
-                    </InfoWindow>
-                </Map>
+                        <Marker
+                            onClick={this.onMarkerClick}
+                            name={"You're here"}
+                        />
+                        {renderMarkers}
+                        <InfoWindow
+                            marker={this.state.activeMarker}
+                            visible={this.state.showingInfoWindow}
+                            onClose={this.onClose}>
+                            <div>
+                                <h4>{this.state.selectedPlace.name}</h4>
+                            </div>
+                        </InfoWindow>
+                    </Map>
+                )}
             </>
         );
     }
