@@ -7,6 +7,8 @@ import {
 } from "google-maps-react";
 import axios from "axios";
 
+import terminalSpot from "../images/terminal-spot.png";
+
 let center = {lat: "", lng: ""},
     zoom = 18;
 
@@ -81,6 +83,7 @@ export class MapContainer extends Component {
                         onClick={this.onMarkerClick}
                         key={terminal._id}
                         name={terminal.address}
+                        icon={terminalSpot}
                         position={{
                             lat: terminal.latitude,
                             lng: terminal.longitude,
