@@ -11,6 +11,8 @@ import gif from "../assets/gif/giphy.gif";
 import denied from "../assets/img/30823194-access-denied-stamp.jpg"
 import distance from "../calculate_distance";
 import terminalSpot from "../images/terminal-spot.png";
+const images = require.context("../images/", true);
+const imagePath = name => images(name, true);
 
 let center = {lat: "", lng: ""},
     zoom = 15,
@@ -66,8 +68,12 @@ export class MapContainer extends Component {
                     terminals: res.data.terminals,
                     loaded: true,
                 });
+            })
+            .catch(err => {
+                console.log(err);
             });
     }
+
     onMarkerClick = (props, marker, e) => {
         this.setState({
             selectedPlace: props,
@@ -101,32 +107,37 @@ export class MapContainer extends Component {
         };
 
         const renderMarkers = this.state.terminals.map(el => {
-            return (
-                <Marker
-                    key={el._id}
-                    onClick={this.onMarkerClick}
-                    name={
-                        !el.address
-                            ? `${"N/A se trouve à "}${distance(
-                                  el.latitude,
-                                  el.longitude,
-                                  center.lat,
-                                  center.lng,
-                                  "k",
-                              ).toFixed(2)} km`
-                            : `${el.address} se trouve à ${distance(
-                                  el.latitude,
-                                  el.longitude,
-                                  center.lat,
-                                  center.lng,
-                                  "k",
-                              ).toFixed(2)} km`
-                    }
-                    title={el.address}
-                    icon={terminalSpot}
-                    position={{lat: el.latitude, lng: el.longitude}}
-                />
-            );
+            try {
+                console.log();
+                return (
+                    <Marker
+                        key={el._id}
+                        onClick={this.onMarkerClick}
+                        name={`${el.bank.name} - ${
+                            !el.address
+                                ? `${"N/A se trouve à "}${distance(
+                                      el.latitude,
+                                      el.longitude,
+                                      center.lat,
+                                      center.lng,
+                                      "k",
+                                  ).toFixed(2)} km`
+                                : `${el.address} se trouve à ${distance(
+                                      el.latitude,
+                                      el.longitude,
+                                      center.lat,
+                                      center.lng,
+                                      "k",
+                                  ).toFixed(2)} km`
+                        }`}
+                        title={el.address}
+                        icon={`../images/${el.bank.icon}`}
+                        position={{lat: el.latitude, lng: el.longitude}}
+                    />
+                );
+            } catch (error) {
+                console.log(error);
+            }
         });
 
         return (

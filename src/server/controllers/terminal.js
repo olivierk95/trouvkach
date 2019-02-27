@@ -3,6 +3,7 @@ import Terminals from "../models/terminals.js";
 /* GET ALL TERMINALS */
 const show = (req, res) => {
     Terminals.find()
+        .populate("bank")
         .then(terminals => {
             res.status(200).json({terminals});
         })
@@ -22,7 +23,9 @@ const showById = (req, res, next) => {
 };
 
 const getByPosition = (req, res) => {
-    Terminals.where({latitude: {$lte: req.params.lat1, $gte: req.params.lat2}})
+    Terminals.find()
+        .populate("bank")
+        .where({latitude: {$lte: req.params.lat1, $gte: req.params.lat2}})
         .where({longitude: {$lte: req.params.lng1, $gte: req.params.lng2}})
         .then(terminals => {
             res.status(200).json({terminals});
