@@ -44,6 +44,7 @@ export class MapContainer extends Component {
         loaded: false,
         clickedTerm: {lat: 0, lng: 0},
         distance: 0,
+        bankTerminalsName:[],
     };
 
     componentDidMount() {
