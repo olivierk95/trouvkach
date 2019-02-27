@@ -69,7 +69,7 @@ export class MapContainer extends Component {
             });
     }
 
-    onMarkerClick = (props, marker, e) =>
+    onMarkerClick = (props, marker, e) => {
         this.setState({
             selectedPlace: props,
             activeMarker: marker,
@@ -98,32 +98,41 @@ export class MapContainer extends Component {
         };
 
         const renderMarkers = this.state.terminals.map(el => {
-            return (
-                <Marker
-                    key={el._id}
-                    onClick={this.onMarkerClick}
-                    name={
-                        !el.address
-                            ? `${"N/A se trouve à "}${distance(
-                                  el.latitude,
-                                  el.longitude,
-                                  center.lat,
-                                  center.lng,
-                                  "k",
-                              ).toFixed(2)} km`
-                            : `${el.address} se trouve à ${distance(
-                                  el.latitude,
-                                  el.longitude,
-                                  center.lat,
-                                  center.lng,
-                                  "k",
-                              ).toFixed(2)} km`
-                    }
-                    title={el.address}
-                    icon={terminalSpot}
-                    position={{lat: el.latitude, lng: el.longitude}}
-                />
-            );
+            try {
+                console.log();
+                return (
+                    <Marker
+                        key={el._id}
+                        onClick={this.onMarkerClick}
+                        name={`${el.bank.name}\n${
+                            !el.address
+                                ? `${"N/A se trouve à "}${distance(
+                                      el.latitude,
+                                      el.longitude,
+                                      center.lat,
+                                      center.lng,
+                                      "k",
+                                  ).toFixed(2)} km`
+                                : `${el.address} se trouve à ${distance(
+                                      el.latitude,
+                                      el.longitude,
+                                      center.lat,
+                                      center.lng,
+                                      "k",
+                                  ).toFixed(2)} km`
+                        }`}
+                        title={el.address}
+                        icon={
+                            el.bank.icon
+                                ? `../images/${el.bank.icon}`
+                                : {terminalSpot}
+                        }
+                        position={{lat: el.latitude, lng: el.longitude}}
+                    />
+                );
+            } catch (error) {
+                console.log(error);
+            }
         });
 
         return (
