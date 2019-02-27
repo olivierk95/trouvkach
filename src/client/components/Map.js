@@ -9,8 +9,9 @@ import {
 } from "google-maps-react";
 import gif from "../assets/gif/giphy.gif";
 import distance from "../calculate_distance";
-
 import terminalSpot from "../images/terminal-spot.png";
+const images = require.context('../images/', true)
+const imagePath = (name) => images(name, true)
 
 let center = {lat: "", lng: ""},
     zoom = 15;
@@ -104,7 +105,7 @@ export class MapContainer extends Component {
                     <Marker
                         key={el._id}
                         onClick={this.onMarkerClick}
-                        name={`${el.bank.name}\n${
+                        name={`${el.bank.name} - ${
                             !el.address
                                 ? `${"N/A se trouve à "}${distance(
                                       el.latitude,
@@ -123,9 +124,7 @@ export class MapContainer extends Component {
                         }`}
                         title={el.address}
                         icon={
-                            el.bank.icon
-                                ? `../images/${el.bank.icon}`
-                                : {terminalSpot}
+                            `../images/${el.bank.icon}`
                         }
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
