@@ -8,11 +8,8 @@ import {
     Polyline,
 } from "google-maps-react";
 import gif from "../assets/gif/giphy.gif";
-import denied from "../assets/img/30823194-access-denied-stamp.jpg"
 import distance from "../calculate_distance";
-import terminalSpot from "../images/terminal-spot.png";
 const images = require.context("../images/", true);
-const imagePath = name => images(name, true);
 
 let center = {lat: "", lng: ""},
     zoom = 15,
@@ -143,8 +140,7 @@ export class MapContainer extends Component {
         return (
             <>
             {!permission && <div>
-                        <h3>{"You don't allow to locate you !!!"}</h3>
-                        <img src={denied} alt="denied" />
+                        <h3>{"Looking for localisation..."}</h3>
                     </div>}
                 {!this.state.loaded && (
                     <div>
