@@ -8,12 +8,13 @@ import {
     Polyline,
 } from "google-maps-react";
 import gif from "../assets/gif/giphy.gif";
+import denied from "../assets/img/30823194-access-denied-stamp.jpg"
 import distance from "../calculate_distance";
 import terminalSpot from "../images/terminal-spot.png";
 
-
 let center = {lat: "", lng: ""},
-    zoom = 15;
+    zoom = 15,
+    permission = false;
 
 const options = {
     enableHighAccuracy: true,
@@ -23,12 +24,14 @@ const options = {
 
 const error = err => {
     console.warn(`ERREUR (${err.code}): ${err.message}`);
+    permission = false;
 };
 const success = pos => {
     center = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
     };
+    permission = true;
 };
 
 navigator.geolocation.watchPosition(success, error, options);
@@ -51,7 +54,7 @@ export class MapContainer extends Component {
             lat2: center.lat - 0.02,
             lng2: center.lng - 0.04,
         };
-        
+
         axios
             .get(
                 `/api/pos/${aroundCenter.lat1}/${aroundCenter.lat2}/${
@@ -89,7 +92,6 @@ export class MapContainer extends Component {
     deleteATM = () => {
         console.log("deleted !");
     };
-
 
     render() {
         const mapStyles = {
@@ -129,13 +131,17 @@ export class MapContainer extends Component {
 
         return (
             <>
+            {!permission && <div>
+                        <h3>{"You don't allow to locate you !!!"}</h3>
+                        <img src={denied} alt="denied" />
+                    </div>}
                 {!this.state.loaded && (
                     <div>
                         <h3>{"Don't worry ! It's loading..."}</h3>
                         <img src={gif} alt="loading" />
                     </div>
                 )}
-                {this.state.loaded && (
+                {this.state.loaded && permission && (
                     <Map
                         google={this.props.google}
                         zoom={zoom}
@@ -170,9 +176,7 @@ export class MapContainer extends Component {
                             onClose={this.onClose}>
                             <div>
                                 <h4>{this.state.selectedPlace.name}</h4>
-                                <button onClick={this.deleteATM}>
-                                    delete
-                                </button>
+                                <button onClick={this.deleteATM}>delete</button>
                             </div>
                         </InfoWindow>
                     </Map>
