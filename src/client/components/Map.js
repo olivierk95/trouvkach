@@ -5,10 +5,12 @@ import {
     GoogleApiWrapper as googleApiWrapper,
     InfoWindow,
     Marker,
+    Polyline,
 } from "google-maps-react";
+import gif from "../assets/gif/giphy.gif";
+import distance from "../calculate_distance";
 
 import terminalSpot from "../images/terminal-spot.png";
-import gif from "../assets/gif/giphy.gif";
 
 let center = {lat: "", lng: ""},
     zoom = 15;
@@ -38,6 +40,8 @@ export class MapContainer extends Component {
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
         terminals: [], // fetch all terminals
         loading: false,
+        clickedTerm: {lat: 0, lng: 0},
+        distance: 0,
     };
 
     componentDidMount() {
@@ -70,7 +74,12 @@ export class MapContainer extends Component {
             selectedPlace: props,
             activeMarker: marker,
             showingInfoWindow: true,
+            clickedTerm: {
+                lat: props.position.lat,
+                lng: props.position.lng,
+            },
         });
+    };
 
     onClose = () => {
         if (this.state.showingInfoWindow) {
@@ -88,23 +97,34 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const renderMarkers = this.state.terminals
-            .filter(item => item.address != null)
-            .map(terminal => {
-                console.log(Object.values(terminal.bank)[4]);
-                return (
-                    <Marker
-                        onClick={this.onMarkerClick}
-                        key={terminal._id}
-                        name={Object.values(terminal.bank)[4]}
-                        icon={terminalSpot}
-                        position={{
-                            lat: terminal.latitude,
-                            lng: terminal.longitude,
-                        }}
-                    />
-                );
-            });
+        const renderMarkers = this.state.terminals.map(el => {
+            return (
+                <Marker
+                    key={el._id}
+                    onClick={this.onMarkerClick}
+                    name={
+                        !el.address
+                            ? `${"N/A se trouve à "}${distance(
+                                  el.latitude,
+                                  el.longitude,
+                                  center.lat,
+                                  center.lng,
+                                  "k",
+                              ).toFixed(2)} km`
+                            : `${el.address} se trouve à ${distance(
+                                  el.latitude,
+                                  el.longitude,
+                                  center.lat,
+                                  center.lng,
+                                  "k",
+                              ).toFixed(2)} km`
+                    }
+                    title={el.address}
+                    icon={terminalSpot}
+                    position={{lat: el.latitude, lng: el.longitude}}
+                />
+            );
+        });
 
         return (
             <>
@@ -120,11 +140,30 @@ export class MapContainer extends Component {
                         zoom={zoom}
                         style={mapStyles}
                         initialCenter={center}>
+                        {this.state.clickedTerm.lat !== 0 &&
+                        this.state.clickedTerm.lng !== 0 ? (
+                            <Polyline
+                                path={[
+                                    {lat: center.lat, lng: center.lng},
+                                    {
+                                        lat: this.state.clickedTerm.lat,
+                                        lng: this.state.clickedTerm.lng,
+                                    },
+                                ]}
+                                strokeColor="#EB6123"
+                                strokeOpacity={0.8}
+                                strokeWeight={3}
+                            />
+                        ) : (
+                            ""
+                        )}
+
                         <Marker
                             onClick={this.onMarkerClick}
                             name={"You're here"}
                         />
                         {renderMarkers}
+
                         <InfoWindow
                             marker={this.state.activeMarker}
                             visible={this.state.showingInfoWindow}
