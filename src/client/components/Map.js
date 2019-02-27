@@ -10,8 +10,8 @@ import {
 import gif from "../assets/gif/giphy.gif";
 import distance from "../calculate_distance";
 import terminalSpot from "../images/terminal-spot.png";
-const images = require.context('../images/', true)
-const imagePath = (name) => images(name, true)
+const images = require.context("../images/", true);
+const imagePath = name => images(name, true);
 
 let center = {lat: "", lng: ""},
     zoom = 15;
@@ -123,9 +123,7 @@ export class MapContainer extends Component {
                                   ).toFixed(2)} km`
                         }`}
                         title={el.address}
-                        icon={
-                            `../images/${el.bank.icon}`
-                        }
+                        icon={`../images/${el.bank.icon}`}
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
                 );
