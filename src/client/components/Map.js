@@ -9,8 +9,8 @@ import {
 } from "google-maps-react";
 import gif from "../assets/gif/giphy.gif";
 import distance from "../calculate_distance";
-
 import terminalSpot from "../images/terminal-spot.png";
+
 
 let center = {lat: "", lng: ""},
     zoom = 15;
@@ -31,7 +31,7 @@ const success = pos => {
     };
 };
 
-navigator.geolocation.getCurrentPosition(success, error, options);
+navigator.geolocation.watchPosition(success, error, options);
 
 export class MapContainer extends Component {
     state = {
@@ -39,7 +39,7 @@ export class MapContainer extends Component {
         activeMarker: {}, // Shows the active marker upon click
         selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
         terminals: [], // fetch all terminals
-        loading: false,
+        loaded: false,
         clickedTerm: {lat: 0, lng: 0},
         distance: 0,
         bankTerminalsName: [],
@@ -52,7 +52,7 @@ export class MapContainer extends Component {
             lat2: center.lat - 0.02,
             lng2: center.lng - 0.04,
         };
-
+        
         axios
             .get(
                 `/api/pos/${aroundCenter.lat1}/${aroundCenter.lat2}/${
@@ -62,7 +62,7 @@ export class MapContainer extends Component {
             .then(res => {
                 this.setState({
                     terminals: res.data.terminals,
-                    loading: true,
+                    loaded: true,
                 });
             });
     }
@@ -86,6 +86,11 @@ export class MapContainer extends Component {
             });
         }
     };
+
+    deleteATM = () => {
+        console.log("deleted !");
+    };
+
 
     render() {
         const mapStyles = {
@@ -133,20 +138,20 @@ export class MapContainer extends Component {
 
         return (
             <>
-                {!this.state.loading && (
+                {!this.state.loaded && (
                     <div>
                         <h3>{"Don't worry ! It's loading..."}</h3>
                         <img src={gif} alt="loading" />
                     </div>
                 )}
-                {this.state.loading && (
+                {this.state.loaded && (
                     <Map
                         google={this.props.google}
                         zoom={zoom}
                         style={mapStyles}
                         initialCenter={center}>
                         {this.state.clickedTerm.lat !== 0 &&
-                        this.state.clickedTerm.lng !== 0 ? (
+                        this.state.showingInfoWindow ? (
                             <Polyline
                                 path={[
                                     {lat: center.lat, lng: center.lng},
@@ -168,13 +173,15 @@ export class MapContainer extends Component {
                             name={"You're here"}
                         />
                         {renderMarkers}
-
                         <InfoWindow
                             marker={this.state.activeMarker}
                             visible={this.state.showingInfoWindow}
                             onClose={this.onClose}>
                             <div>
                                 <h4>{this.state.selectedPlace.name}</h4>
+                                <button onClick={this.deleteATM}>
+                                    delete
+                                </button>
                             </div>
                         </InfoWindow>
                     </Map>
