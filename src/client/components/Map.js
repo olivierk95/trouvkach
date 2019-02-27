@@ -10,7 +10,8 @@ import {
 import gif from "../assets/gif/giphy.gif";
 import distance from "../calculate_distance";
 import terminalSpot from "../images/terminal-spot.png";
-
+const images = require.context("../images/", true);
+const imagePath = name => images(name, true);
 
 let center = {lat: "", lng: ""},
     zoom = 15;
@@ -64,8 +65,12 @@ export class MapContainer extends Component {
                     terminals: res.data.terminals,
                     loaded: true,
                 });
+            })
+            .catch(err => {
+                console.log(err);
             });
     }
+
     onMarkerClick = (props, marker, e) => {
         this.setState({
             selectedPlace: props,
@@ -99,20 +104,14 @@ export class MapContainer extends Component {
             margin: "0 auto",
         };
 
-        const renderMarkers = this.state.terminals
-            .filter(item => item.address != null || item.address != undefined)
-            .map(el => {
-                try {
-                    console.log(Object.values(el.bank)[4]);
-                } catch (error) {
-                    console.warn(error);
-                }
-
+        const renderMarkers = this.state.terminals.map(el => {
+            try {
+                console.log();
                 return (
                     <Marker
                         key={el._id}
                         onClick={this.onMarkerClick}
-                        name={
+                        name={`${el.bank.name} - ${
                             !el.address
                                 ? `${"N/A se trouve à "}${distance(
                                       el.latitude,
@@ -128,13 +127,16 @@ export class MapContainer extends Component {
                                       center.lng,
                                       "k",
                                   ).toFixed(2)} km`
-                        }
+                        }`}
                         title={el.address}
-                        icon={terminalSpot}
+                        icon={`../images/${el.bank.icon}`}
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
                 );
-            });
+            } catch (error) {
+                console.log(error);
+            }
+        });
 
         return (
             <>

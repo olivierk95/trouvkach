@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:////home/badou/Desktop/LastDeploy/trouvkach/node_modules/axios/index.js"],"names":["module","exports","__webpack_require__"],"mappings":"6EAAAA,EAAAC,QAAiBC,EAAQ","file":"js/61d1b8d3b7011250c6f2.js","sourcesContent":["module.exports = require('./lib/axios');"],"sourceRoot":""}
