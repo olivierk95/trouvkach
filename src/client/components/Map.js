@@ -9,7 +9,8 @@ import {
 } from "google-maps-react";
 import gif from "../assets/gif/giphy.gif";
 import distance from "../calculate_distance";
-const images = require.context("../images/", true);
+require.context("../images/", true);
+import BankList from "./BankList";
 
 let center = {lat: "", lng: ""},
     zoom = 15,
@@ -18,7 +19,7 @@ let center = {lat: "", lng: ""},
 const options = {
     enableHighAccuracy: true,
     timeout: 5000,
-    maximumAge: 0,
+    maximumAge: 5000,
 };
 
 const error = err => {
@@ -44,7 +45,6 @@ export class MapContainer extends Component {
         loaded: false,
         clickedTerm: {lat: 0, lng: 0},
         distance: 0,
-        bankTerminalsName:[],
     };
 
     componentDidMount() {
@@ -99,34 +99,28 @@ export class MapContainer extends Component {
 
     render() {
         const mapStyles = {
-            width: "95%",
-            height: "75%",
-            margin: "0 auto",
+            width: "76%",
+            height: "80%",
+            margin: "0 0 0 1rem",
         };
 
         const renderMarkers = this.state.terminals.map(el => {
+            const eachDistance = distance(
+                el.latitude,
+                el.longitude,
+                center.lat,
+                center.lng,
+                "k",
+            ).toFixed(2);
             try {
-                console.log();
                 return (
                     <Marker
                         key={el._id}
                         onClick={this.onMarkerClick}
                         name={`${el.bank.name} - ${
                             !el.address
-                                ? `${"N/A se trouve à "}${distance(
-                                      el.latitude,
-                                      el.longitude,
-                                      center.lat,
-                                      center.lng,
-                                      "k",
-                                  ).toFixed(2)} km`
-                                : `${el.address} se trouve à ${distance(
-                                      el.latitude,
-                                      el.longitude,
-                                      center.lat,
-                                      center.lng,
-                                      "k",
-                                  ).toFixed(2)} km`
+                                ? `${"N/A se trouve à "}${eachDistance} km`
+                                : `${el.address} se trouve à ${eachDistance} km`
                         }`}
                         title={el.address}
                         icon={`../images/${el.bank.icon}`}
@@ -140,9 +134,11 @@ export class MapContainer extends Component {
 
         return (
             <>
-            {!permission && <div>
+                {!permission && (
+                    <div>
                         <h3>{"Looking for localisation..."}</h3>
-                    </div>}
+                    </div>
+                )}
                 {!this.state.loaded && (
                     <div>
                         <h3>{"Don't worry ! It's loading..."}</h3>
@@ -189,6 +185,13 @@ export class MapContainer extends Component {
                         </InfoWindow>
                     </Map>
                 )}
+                <div className="banklist">
+                    <BankList
+                        terminals={this.state.terminals}
+                        loaded={this.state.loaded}
+                        center={center}
+                    />
+                </div>
             </>
         );
     }
