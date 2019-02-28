@@ -1,0 +1,202 @@
+import React, {Component} from "react";
+import axios from "axios";
+import {
+    Map,
+    GoogleApiWrapper as googleApiWrapper,
+    InfoWindow,
+    Marker,
+    Polyline,
+} from "google-maps-react";
+import gif from "../assets/gif/giphy.gif";
+import distance from "../calculate_distance";
+require.context("../images/", true);
+import BankList from "./BankList";
+
+let center = {lat: "", lng: ""},
+    zoom = 15,
+    permission = false;
+
+const options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 5000,
+};
+
+const error = err => {
+    console.warn(`ERREUR (${err.code}): ${err.message}`);
+    permission = false;
+};
+const success = pos => {
+    center = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+    };
+    permission = true;
+};
+
+navigator.geolocation.watchPosition(success, error, options);
+
+export class MapContainer extends Component {
+    state = {
+        showingInfoWindow: false, // Hides or the shows the infoWindow
+        activeMarker: {}, // Shows the active marker upon click
+        selectedPlace: {}, // Shows the infoWindow to the selected place upon a marker
+        terminals: [], // fetch all terminals
+        loaded: false,
+        clickedTerm: {lat: 0, lng: 0},
+        distance: 0,
+    };
+
+    componentDidMount() {
+        let aroundCenter = {
+            lat1: center.lat + 0.02,
+            lng1: center.lng + 0.04,
+            lat2: center.lat - 0.02,
+            lng2: center.lng - 0.04,
+        };
+
+        axios
+            .get(
+                `/api/pos/${aroundCenter.lat1}/${aroundCenter.lat2}/${
+                    aroundCenter.lng1
+                }/${aroundCenter.lng2}`,
+            )
+            .then(res => {
+                this.setState({
+                    terminals: res.data.terminals,
+                    loaded: true,
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    onMarkerClick = (props, marker) => {
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true,
+            clickedTerm: {
+                lat: props.position.lat,
+                lng: props.position.lng,
+            },
+        });
+    };
+
+    onClose = () => {
+        if (this.state.showingInfoWindow) {
+            this.setState({
+                showingInfoWindow: false,
+                activeMarker: null,
+            });
+        }
+    };
+
+    deleteATM = () => {
+        console.log("deleted !");
+    };
+
+    render() {
+        const mapStyles = {
+            width: "76%",
+            height: "30rem",
+            margin: "0 0 0 1rem",
+        };
+
+        const renderMarkers = this.state.terminals.map(el => {
+            const eachDistance = distance(
+                el.latitude,
+                el.longitude,
+                center.lat,
+                center.lng,
+                "k",
+            ).toFixed(2);
+
+            try {
+                return (
+                    <Marker
+                        key={el._id}
+                        onClick={this.onMarkerClick}
+                        name={`${el.bank.name} - ${
+                            !el.address
+                                ? `${"N/A se trouve à "}${eachDistance} km`
+                                : `${el.address} se trouve à ${eachDistance} km`
+                        }`}
+                        title={el.bank.name}
+                        icon={`../images/${el.bank.icon}`}
+                        position={{lat: el.latitude, lng: el.longitude}}
+                    />
+                );
+            } catch (err) {
+                console.log(err);
+            }
+        });
+
+        return (
+            <>
+                {!permission && (
+                    <div>
+                        <h3>{"Looking for localisation..."}</h3>
+                    </div>
+                )}
+                {!this.state.loaded && (
+                    <div>
+                        <h3>{"Don't worry ! It's loading..."}</h3>
+                        <img src={gif} alt="loading" />
+                    </div>
+                )}
+                {this.state.loaded && permission && (
+                    <Map
+                        google={this.props.google}
+                        zoom={zoom}
+                        style={mapStyles}
+                        initialCenter={center}>
+                        {this.state.clickedTerm.lat !== 0 &&
+                        this.state.showingInfoWindow ? (
+                            <Polyline
+                                path={[
+                                    {lat: center.lat, lng: center.lng},
+                                    {
+                                        lat: this.state.clickedTerm.lat,
+                                        lng: this.state.clickedTerm.lng,
+                                    },
+                                ]}
+                                strokeColor="#EB6123"
+                                strokeOpacity={0.8}
+                                strokeWeight={3}
+                            />
+                        ) : (
+                            ""
+                        )}
+
+                        <Marker
+                            onClick={this.onMarkerClick}
+                            name={"You're here"}
+                        />
+                        {renderMarkers}
+                        <InfoWindow
+                            marker={this.state.activeMarker}
+                            visible={this.state.showingInfoWindow}
+                            onClose={this.onClose}>
+                            <div>
+                                <h4>{this.state.selectedPlace.name}</h4>
+                            </div>
+                        </InfoWindow>
+                    </Map>
+                )}
+                <div className="banklist">
+                    <BankList
+                        terminals={this.state.terminals}
+                        loaded={this.state.loaded}
+                        center={center}
+                    />
+                </div>
+            </>
+        );
+    }
+}
+
+export default googleApiWrapper({
+    apiKey: "AIzaSyDalvpxv-7crRgGa3MNhZiWIClcM1urB2o",
+})(MapContainer);

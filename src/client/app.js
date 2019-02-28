@@ -8,7 +8,8 @@
 
 import * as React from "react";
 import ReactDOM from "react-dom";
+import "./calculate_distance";
 
-import HelloWorld from "./components/hello";
+import AtmMap from "./components/AtmMap";
 
-ReactDOM.render(<HelloWorld />, document.querySelector("#app"));
+ReactDOM.render(<AtmMap />, document.querySelector("#app"));

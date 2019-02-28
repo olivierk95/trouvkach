@@ -8,20 +8,35 @@
 
 import express from "express";
 import path from "path";
+import mongoose from "mongoose";
+import router from "./routes.js";
 
-const {APP_PORT} = process.env;
+import bodyParser from "body-parser";
+
+mongoose.connect(
+    `mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017/trouvkach?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true`,
+);
+
+// mongoose.connect(`mongodb://dev:dev@mongo:27017/trouvkach?authSource=admin`);
+
+let db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+    console.log("Connected !!! Yeah !!!");
+});
+
+const ports = 8080 || 8000;
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, "../../bin/client")));
+app.use("/api", router);
 
-app.get("/hello", (req, res) => {
-    console.log(`ℹ️  (${req.method.toUpperCase()}) ${req.url}`);
-    res.send("Hello, World!");
-});
+app.use(bodyParser.json());
 
-app.listen(APP_PORT, () =>
-    console.log(`🚀 Server is listening on port ${APP_PORT}.`),
+app.listen(ports, () =>
+    console.log(`🚀 Server is listening on port ${ports}.`),
 );
 
-// const uri = "mongodb://bestdev:bestdev@trouvkach-becode-shard-00-00-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-01-ph6as.mongodb.net:27017,trouvkach-becode-shard-00-02-ph6as.mongodb.net:27017/test?ssl=true&replicaSet=Trouvkach-becode-shard-0&authSource=admin&retryWrites=true";
+export default db;
