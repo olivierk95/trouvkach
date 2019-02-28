@@ -9,26 +9,29 @@ import {
 } from "google-maps-react";
 import gif from "../assets/gif/giphy.gif";
 import distance from "../calculate_distance";
-import terminalSpot from "../images/terminal-spot.png";
-
+require.context("../images/", true);
+import BankList from "./BankList";
 
 let center = {lat: "", lng: ""},
-    zoom = 15;
+    zoom = 15,
+    permission = false;
 
 const options = {
     enableHighAccuracy: true,
     timeout: 5000,
-    maximumAge: 0,
+    maximumAge: 5000,
 };
 
 const error = err => {
     console.warn(`ERREUR (${err.code}): ${err.message}`);
+    permission = false;
 };
 const success = pos => {
     center = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
     };
+    permission = true;
 };
 
 navigator.geolocation.watchPosition(success, error, options);
@@ -42,7 +45,6 @@ export class MapContainer extends Component {
         loaded: false,
         clickedTerm: {lat: 0, lng: 0},
         distance: 0,
-        bankTerminalsName: [],
     };
 
     componentDidMount() {
@@ -52,7 +54,7 @@ export class MapContainer extends Component {
             lat2: center.lat - 0.02,
             lng2: center.lng - 0.04,
         };
-        
+
         axios
             .get(
                 `/api/pos/${aroundCenter.lat1}/${aroundCenter.lat2}/${
@@ -64,9 +66,13 @@ export class MapContainer extends Component {
                     terminals: res.data.terminals,
                     loaded: true,
                 });
+            })
+            .catch(err => {
+                console.log(err);
             });
     }
-    onMarkerClick = (props, marker, e) => {
+
+    onMarkerClick = (props, marker) => {
         this.setState({
             selectedPlace: props,
             activeMarker: marker,
@@ -91,60 +97,56 @@ export class MapContainer extends Component {
         console.log("deleted !");
     };
 
-
     render() {
         const mapStyles = {
-            width: "95%",
-            height: "75%",
-            margin: "0 auto",
+            width: "76%",
+            height: "30rem",
+            margin: "0 0 0 1rem",
         };
 
-        const renderMarkers = this.state.terminals
-            .filter(item => item.address != null || item.address != undefined)
-            .map(el => {
-                try {
-                    console.log(Object.values(el.bank)[4]);
-                } catch (error) {
-                    console.warn(error);
-                }
+        const renderMarkers = this.state.terminals.map(el => {
+            const eachDistance = distance(
+                el.latitude,
+                el.longitude,
+                center.lat,
+                center.lng,
+                "k",
+            ).toFixed(2);
 
+            try {
                 return (
                     <Marker
                         key={el._id}
                         onClick={this.onMarkerClick}
-                        name={
+                        name={`${el.bank.name} - ${
                             !el.address
-                                ? `${"N/A se trouve à "}${distance(
-                                      el.latitude,
-                                      el.longitude,
-                                      center.lat,
-                                      center.lng,
-                                      "k",
-                                  ).toFixed(2)} km`
-                                : `${el.address} se trouve à ${distance(
-                                      el.latitude,
-                                      el.longitude,
-                                      center.lat,
-                                      center.lng,
-                                      "k",
-                                  ).toFixed(2)} km`
-                        }
-                        title={el.address}
-                        icon={terminalSpot}
+                                ? `${"N/A se trouve à "}${eachDistance} km`
+                                : `${el.address} se trouve à ${eachDistance} km`
+                        }`}
+                        title={el.bank.name}
+                        icon={`../images/${el.bank.icon}`}
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
                 );
-            });
+            } catch (err) {
+                console.log(err);
+            }
+        });
 
         return (
             <>
+                {!permission && (
+                    <div>
+                        <h3>{"Looking for localisation..."}</h3>
+                    </div>
+                )}
                 {!this.state.loaded && (
                     <div>
                         <h3>{"Don't worry ! It's loading..."}</h3>
                         <img src={gif} alt="loading" />
                     </div>
                 )}
-                {this.state.loaded && (
+                {this.state.loaded && permission && (
                     <Map
                         google={this.props.google}
                         zoom={zoom}
@@ -179,13 +181,17 @@ export class MapContainer extends Component {
                             onClose={this.onClose}>
                             <div>
                                 <h4>{this.state.selectedPlace.name}</h4>
-                                <button onClick={this.deleteATM}>
-                                    delete
-                                </button>
                             </div>
                         </InfoWindow>
                     </Map>
                 )}
+                <div className="banklist">
+                    <BankList
+                        terminals={this.state.terminals}
+                        loaded={this.state.loaded}
+                        center={center}
+                    />
+                </div>
             </>
         );
     }

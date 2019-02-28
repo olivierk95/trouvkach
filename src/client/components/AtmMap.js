@@ -17,10 +17,10 @@ export default class AtmMap extends React.Component {
             <div className="container">
                 <h1>{"Check ATM "}</h1>
                 <hr />
-                <br />
-                <div>
+                <div className="map">
                     <Map />
                 </div>
+                
             </div>
         );
     }
