@@ -11,12 +11,16 @@ const TerminalSchema = new Schema(
         latitude: Number,
         longitude: Number,
         address: String,
+        isEmpty: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: {
             createdAt: "created_at",
             updatedAt: "updated_at",
-            deletecAt: "deleted_at",
+            deletedAt: "deleted_at",
         },
     },
 );

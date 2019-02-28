@@ -124,7 +124,11 @@ export class MapContainer extends Component {
                                   ).toFixed(2)} km`
                         }`}
                         title={el.address}
-                        icon={`../images/${el.bank.icon}`}
+                        icon={
+                            el.bank.icon
+                                ? `../images/${el.bank.icon}`
+                                : {terminalSpot}
+                        }
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
                 );

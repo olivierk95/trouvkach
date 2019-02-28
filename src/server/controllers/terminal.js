@@ -35,6 +35,21 @@ const getByPosition = (req, res) => {
         });
 };
 
+const modify = (req, res) => {
+    Terminals.findByIdAndUpdate(
+        req.params.id,
+        {isEmpty: true},
+        {new: true},
+        (err, pos) => {
+            if (err) {
+                return next(err);
+            }
+            res.json(pos);
+        },
+    );
+};
+
 exports.show = show;
 exports.showById = showById;
 exports.getByPosition = getByPosition;
+exports.modify = modify;
