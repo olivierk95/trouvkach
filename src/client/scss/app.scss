@@ -36,13 +36,13 @@
     position: relative;
     height: 30rem;
     overflow-y: scroll;
-  width: 21%;
-  left: 66rem;  
+  width: 20%;
+
   background: #ededed;
   padding: .3rem;
   border-radius: 5px;
 
-
+float: right;
 }
 .infos {
   display: flex;
@@ -54,11 +54,32 @@
   text-align: left;
   margin: 0 0 2rem 0;
   border-radius: 5px;
+  list-style: none;
+
   img {
     margin-right: .5rem;
   }
 }
 
+.street {
+  font-style: italic;
+  font-size: .7rem;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
 .buttons {
   text-align: right;
+button {
+  cursor: pointer;
+  border: none;
+  color: rgb(255, 145, 0);
+  background-color: rgba(255, 255, 255, 0.561);
+  border-radius: .4rem;
+  margin: .2rem;
+  padding-top: .1rem;
+}
+
+button:hover {
+  background-color: rgba(255, 255, 255, 0.979);
+}
 }

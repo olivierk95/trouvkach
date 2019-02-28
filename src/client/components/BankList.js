@@ -53,7 +53,7 @@ export default function BankList(props) {
                                         <strong>{el.name}</strong>
                                     </p>
 
-                                    {!el.address ? "N/A" : el.address}
+                                    <p className="street"> {!el.address ? "N/A" : el.address}</p>
                                     <p>{`à ${el.distance} km`}</p>
                                 </div>
                             </div>
