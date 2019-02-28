@@ -72,7 +72,7 @@ export class MapContainer extends Component {
             });
     }
 
-    onMarkerClick = (props, marker, e) => {
+    onMarkerClick = (props, marker) => {
         this.setState({
             selectedPlace: props,
             activeMarker: marker,
@@ -100,7 +100,7 @@ export class MapContainer extends Component {
     render() {
         const mapStyles = {
             width: "76%",
-            height: "80%",
+            height: "30rem",
             margin: "0 0 0 1rem",
         };
 
@@ -112,6 +112,7 @@ export class MapContainer extends Component {
                 center.lng,
                 "k",
             ).toFixed(2);
+
             try {
                 return (
                     <Marker
@@ -122,13 +123,13 @@ export class MapContainer extends Component {
                                 ? `${"N/A se trouve à "}${eachDistance} km`
                                 : `${el.address} se trouve à ${eachDistance} km`
                         }`}
-                        title={el.address}
+                        title={el.bank.name}
                         icon={`../images/${el.bank.icon}`}
                         position={{lat: el.latitude, lng: el.longitude}}
                     />
                 );
-            } catch (error) {
-                console.log(error);
+            } catch (err) {
+                console.log(err);
             }
         });
 
@@ -180,7 +181,6 @@ export class MapContainer extends Component {
                             onClose={this.onClose}>
                             <div>
                                 <h4>{this.state.selectedPlace.name}</h4>
-                                <button onClick={this.deleteATM}>delete</button>
                             </div>
                         </InfoWindow>
                     </Map>
