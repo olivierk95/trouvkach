@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack:////home/badou/Desktop/LastProject/trouvkach/node_modules/mathjs/index.js"],"names":["module","exports","__webpack_require__"],"mappings":"8EAAAA,EAAAC,QAAiBC,EAAQ","file":"js/00795e3000deb4082046.js","sourcesContent":["module.exports = require('./lib/main')\n"],"sourceRoot":""}
