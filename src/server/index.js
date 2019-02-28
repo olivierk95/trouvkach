@@ -26,7 +26,7 @@ db.once("open", () => {
     console.log("Connected !!! Yeah !!!");
 });
 
-const {APP_PORT} = process.env;
+const ports = 8080 || 8000;
 
 const app = express();
 
@@ -35,14 +35,8 @@ app.use("/api", router);
 
 app.use(bodyParser.json());
 
-app.listen(APP_PORT, () =>
-    console.log(`🚀 Server is listening on port ${APP_PORT}.`),
+app.listen(ports, () =>
+    console.log(`🚀 Server is listening on port ${ports}.`),
 );
-
-// app.get('/', (req, res) => {
-//     var results = db.collection('banks').find({})
-//     console.log(results);
-//     res.send({results: results});
-// });
 
 export default db;
