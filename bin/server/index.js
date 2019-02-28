@@ -24,7 +24,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
   console.log("Connected !!! Yeah !!!");
 });
-const ports = 8080 || 8000;
+const ports = process.env.PORT || 8000;
 const app = (0, _express.default)();
 app.use(_express.default.static(_path.default.resolve(__dirname, "../../bin/client")));
 app.use("/api", _routes.default);
