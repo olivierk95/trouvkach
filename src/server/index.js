@@ -26,7 +26,7 @@ db.once("open", () => {
     console.log("Connected !!! Yeah !!!");
 });
 
-const ports = 8080 || 8000;
+const ports = process.env.PORT || 8000;
 
 const app = express();
 
